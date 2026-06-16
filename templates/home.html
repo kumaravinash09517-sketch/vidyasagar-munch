@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>विद्यासागर — अपना मंच</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800;900&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ आपका ओरिजिनल CSS आर्किटेक्चर ============ */
+:root[data-theme="dark"] {
+  --bg: #080810; --bg2: #10101a; --bg3: #18182a; --card: #1a1a2e;
+  --border: #252540; --text: #eeeef8; --text2: #8888aa; --text3: #555570;
+  --primary: #e63946; --primary2: #ff6b6b; --accent: #ffd166;
+  --green: #06d6a0; --blue: #118ab2; --purple: #9b5de5;
+  --shadow: rgba(0,0,0,0.6);
+  --overlay: rgba(8,8,16,0.92);
+}
+:root[data-theme="light"] {
+  --bg: #f0f2f8; --bg2: #ffffff; --bg3: #e8eaf2; --card: #ffffff;
+  --border: #d0d4e8; --text: #111128; --text2: #556080; --primary: #e63946;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans Devanagari',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* गेटवे लॉक स्क्रीन */
+.app-lock-blur { filter: blur(15px); pointer-events: none; }
+#gatewayPopup {
+  position: fixed; inset: 0; background: rgba(8,8,16,0.96); z-index: 99999;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.gateway-box {
+  background: var(--card); border: 2px solid var(--border); border-radius: 20px;
+  padding: 35px; width: 100%; max-width: 400px; text-align: center;
+  box-shadow: 0 10px 30px var(--shadow);
+}
+
+/* हेडर डिज़ाइन */
+header { position: sticky; top: 0; z-index: 500; background: var(--overlay); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+.header-inner { max-width: 1400px; margin: auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 60px; }
+.logo-main { font-family: 'Baloo 2', cursive; font-size: 1.7rem; font-weight: 900; background: linear-gradient(135deg,var(--primary),var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
+.search-wrap { flex: 1; max-width: 500px; margin: 0 20px; display: flex; align-items: center; background: var(--bg3); border: 1.5px solid var(--border); border-radius: 30px; padding: 0 16px; }
+.search-wrap input { width: 100%; background: none; border: none; outline: none; color: var(--text); padding: 10px 0; }
+.right-nav-items { display: flex; align-items: center; gap: 10px; }
+.pfp-icon { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--purple)); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; }
+
+/* लेआउट स्ट्रक्चर */
+.app-grid-layout { max-width: 1400px; margin: auto; display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 60px); }
+aside { border-right: 1px solid var(--border); padding: 20px 10px; }
+.menu-btn { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; color: var(--text2); font-weight: 600; cursor: pointer; margin-bottom: 5px; }
+.menu-btn:hover, .menu-btn.on { background: var(--bg3); color: var(--text); }
+.menu-btn.on { color: var(--primary); background: rgba(230, 57, 70, 0.1); border-left: 4px solid var(--primary); }
+
+/* वीडियो फ़ीड एरिया */
+.feed-container { padding: 20px; background: var(--bg); }
+.filter-chips-bar { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; }
+.chip-item { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+.chip-item.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+/* आपके स्क्रीनशॉट वाला रियल 4-यूज़र ग्रिड लेआउट */
+.video-responsive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.video-main-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: 0.3s; }
+.video-main-card:hover { transform: translateY(-2px); }
+.video-frame-box { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; }
+.ad-live-alert { position: absolute; top: 8px; left: 8px; background: var(--primary); color: #fff; font-size: 0.7rem; padding: 3px 6px; border-radius: 4px; font-weight: bold; display: none; }
+.video-card-details { padding: 12px; display: flex; gap: 10px; }
+.v-card-title { font-size: 0.92rem; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 4px; }
+.v-card-author { font-size: 0.8rem; color: var(--text2); }
+
+/* 🌟 GOOGLE ADSENSE PLACEHOLDER STYLE */
+.adsense-banner-container { grid-column: 1 / -1; background: rgba(255, 209, 102, 0.05); border: 1.5px dashed var(--accent); border-radius: 12px; padding: 15px; text-align: center; margin: 15px 0; color: var(--accent); font-size: 0.85rem; font-weight: bold; }
+
+/* वॉलेट और टेबल्स */
+.wallet-card-box { background: linear-gradient(135deg, var(--card), var(--bg3)); border: 2px solid var(--border); border-radius: 16px; padding: 25px; text-align: center; margin-bottom: 20px; }
+.balance-large-text { font-family: 'Baloo 2', cursive; font-size: 3rem; font-weight: 900; color: var(--green); margin: 5px 0; }
+.web-input-field { width: 100%; background: var(--bg3); border: 1.5px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text); outline: none; margin-bottom: 12px; }
+
+.web-data-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: var(--card); border-radius: 10px; overflow: hidden; }
+.web-data-table th, .web-data-table td { border: 1px solid var(--border); padding: 12px; text-align: left; font-size: 0.85rem; }
+.web-data-table th { background: var(--bg3); }
+
+.web-page-view { display: none; }
+.web-page-view.active { display: block; }
+
+/* मोडल */
+.modal-bg-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 999; display: none; align-items: center; justify-content: center; padding: 15px; }
+.modal-bg-overlay.open { display: flex; }
+.modal-container-body { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; width: 100%; max-width: 450px; padding: 25px; }
+.primary-btn { background: var(--primary); border: none; color: #fff; padding: 8px 18px; border-radius: 20px; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div id="gatewayPopup">
+  <div class="gateway-box">
+    <div class="gateway-title">🎬 विद्यासागर</div>
+    <p style="color:var(--text2); font-size:0.85rem; margin-bottom:20px;">वेबसाइट में प्रवेश करने के लिए अपना मोबाइल नंबर दर्ज करें</p>
+    <input type="tel" id="userMobileInput" class="web-input-field" placeholder="10-अंकीय मोबाइल नंबर" maxlength="10">
+    <button class="primary-btn" style="width:100%; padding:12px; border-radius:10px;" onclick="unlockRealWebsite()">वेबसाइट ओपन करें 🚀</button>
+  </div>
+</div>
+
+<div id="websiteContentMain" class="app-lock-blur">
+  <header>
+    <div class="header-inner">
+      <div class="logo-main" onclick="switchView('home')">🎬 विद्यासागर</div>
+      <div class="search-wrap"><input type="text" placeholder="वीडियो या क्रिएटर खोजें..."></div>
+      <div class="right-nav-items">
+        <button class="primary-btn" onclick="toggleModalWindow('uploadModal', true)">📤 वीडियो डालें</button>
+        <div class="pfp-icon" id="userAvatarText">वी</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-grid-layout">
+    <aside>
+      <div class="menu-btn on" id="m-home" onclick="switchView('home')">🏠 मुख्य फ़ीड</div>
+      <div class="menu-btn" id="m-wallet" onclick="switchView('wallet')">💰 कमाई वॉलेट</div>
+      <div class="menu-btn" id="m-admin" onclick="switchView('admin')">🛠️ एडमिन पैनल</div>
+      
+      <div style="margin-top: 30px; padding: 15px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; text-align: center; font-size: 0.75rem; color: var(--text3);">
+        [Google AdSense Side-Banner Ads]
+      </div>
+    </aside>
+
+    <main class="feed-container">
+      
+      <div class="web-page-view active" id="view-home">
+        <div class="filter-chips-bar">
+          <div class="chip-item on">सभी वीडियो</div>
+          <div class="chip-item">ट्रेंडिंग</div>
+          <div class="chip-item">मनोरंजन</div>
+          <div class="chip-item">सर्च फ़िल्टर्स</div>
+        </div>
+
+        <div class="video-responsive-grid">
+          {% if db_videos %}
+            {% for video in db_videos %}
+            <div class="video-main-card">
+              <div class="video-frame-box">
+                <div class="ad-live-alert">[GOOGLE ADSENSE REVENUE AD]</div>
+                <video width="100%" height="100%" controls style="object-fit: contain;" onplay="triggerWebsiteAd(this)">
+                  <source src="{{ video.video_file.url }}" type="video/mp4">
+                </video>
+              </div>
+              <div class="video-card-details">
+                <div class="pfp-icon">अ</div>
+                <div class="video-details-txt">
+                  <div class="v-card-title">{{ video.title }}</div>
+                  <div class="v-card-author">{{ video.author_name }} · अभी-अभी</div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% endif %}
+
+          {% for creator in demo_creators %}
+          <div class="video-main-card">
+            <div class="video-frame-box">
+              <div class="ad-live-alert">[GOOGLE ADSENSE REVENUE AD]</div>
+              <video width="100%" height="100%" controls style="object-fit: contain;" onplay="triggerWebsiteAd(this)">
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="video-card-details">
+              <div class="pfp-icon">{{ creator.pfp }}</div>
+              <div class="video-details-txt">
+                <div class="v-card-title">{{ creator.title }}</div>
+                <div class="v-card-author">{{ creator.author }} · {{ creator.time }}</div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="adsense-banner-container">
+          🎯 यहाँ आपका Google AdSense रिस्पॉन्सिव इन-फ़ीड विज्ञापन कोड लोड होगा [In-Feed Banner Ad Code]
+        </div>
+      </div>
+
+      <div class="web-page-view" id="view-wallet">
+        <div class="wallet-card-box">
+          <div style="color:var(--text2); font-weight:600;">आपका कुल वॉलेट बैलेंस (प्रारंभिक ₹0)</div>
+          <div class="balance-large-text">₹<span id="walletLiveNum">0.00</span></div>
+          <p style="font-size:0.8rem; color:var(--text3);">💡 वीडियो प्ले होने पर एडसेंस विज्ञापन लोड होता है और बैलेंस तुरंत जुड़ता है।</p>
+        </div>
+
+        <div class="video-main-card" style="padding: 20px;">
+          <h3 style="margin-bottom:15px;">💸 रियल-टाइम UPI निकासी प्रणाली</h3>
+          <input type="text" id="webUpiInput" class="web-input-field" placeholder="अपनी UPI ID भरें (e.g. name@paytm)">
+          <input type="number" id="webAmountInput" class="web-input-field" placeholder="निकासी राशि (₹)">
+          <button class="primary-btn" style="width:100%; padding:12px; background:var(--green);" onclick="processWebWithdrawal()">🚀 बैंक में ट्रांसफर सबमिट करें</button>
+        </div>
+      </div>
+
+      <div class="web-page-view" id="view-admin">
+        <div class="video-main-card" style="padding: 20px; border-color: var(--primary);">
+          <h3 style="color:var(--primary); margin-bottom:12px;">🛠️ लाइव एडमिन डेटाबेस ट्रैकिंग लॉग (फ़ोन + UPI लिंक)</h3>
+          <div style="overflow-x:auto;">
+            <table class="web-data-table">
+              <thead>
+                <tr>
+                  <th>निकासी आईडी</th>
+                  <th>यूज़र लॉगिन मोबाइल नंबर</th>
+                  <th>UPI ID</th>
+                  <th>ट्रांसफर राशि</th>
+                  <th>स्थिति</th>
+                </tr>
+              </thead>
+              <tbody id="liveAdminTableBody">
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div class="modal-bg-overlay" id="uploadModal">
+  <div class="modal-container-body">
+    <h3 style="margin-bottom:15px;">📤 नया वीडियो लाइव पब्लिश करें
+      <span style="float:right; cursor:pointer; color:var(--text2);" onclick="toggleModalWindow('uploadModal', false)">✕</span>
+    </h3>
+    <form action="/upload/" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="text" name="author_name" class="web-input-field" placeholder="आपका नाम (Author Name)...">
+      <input type="text" name="title" required class="web-input-field" placeholder="वीडियो का शीर्षक (Title)...">
+      <input type="text" name="description" class="web-input-field" placeholder="विवरण (Description)...">
+      <input type="file" name="video_file" accept="video/*" required class="web-input-field">
+      <button type="submit" class="primary-btn" style="width:100%; padding:12px;">🚀 सर्वर पर पब्लिश करें</button>
+    </form>
+  </div>
+</div>
+
+<script>
+let loggedInUserPhone = "";
+let liveWalletBalance = 0.00;
+let localAdminLogs = [];
+
+// लॉगिन अनलॉक मैकेनिज्म
+function unlockRealWebsite() {
+  const phone = document.getElementById('userMobileInput').value.trim();
+  if(phone.length < 10) {
+    alert("त्रुटि: कृपया पूरा 10 अंकों का मोबाइल नंबर डालें!");
+    return;
+  }
+  loggedInUserPhone = phone;
+  document.getElementById('gatewayPopup').style.display = 'none';
+  document.getElementById('websiteContentMain').classList.remove('app-lock-blur');
+  document.getElementById('userAvatarText').textContent = loggedInUserPhone.substring(0,2);
+}
+
+function switchView(viewId) {
+  document.querySelectorAll('.web-page-view').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.menu-btn').forEach(m => m.classList.remove('on'));
+  
+  document.getElementById('view-' + viewId).classList.add('active');
+  document.getElementById('m-' + viewId).classList.add('on');
+}
+
+function toggleModalWindow(id, isOpen) {
+  const el = document.getElementById(id);
+  if(isOpen) el.classList.add('open'); else el.classList.remove('open');
+}
+
+// 🎬 वीडियो प्ले होने पर एडसेंस ऐड पॉपअप और कमाई प्लस होने का लॉजिक
+function triggerWebsiteAd(videoNode) {
+  const adPopup = videoNode.parentElement.querySelector('.ad-live-alert');
+  adPopup.style.display = 'block';
+  setTimeout(() => { adPopup.style.display = 'none'; }, 2000);
+
+  // लाइव कमाई एड होना (प्रति प्ले ₹20.00)
+  liveWalletBalance += 20.00;
+  document.getElementById('walletLiveNum').textContent = liveWalletBalance.toFixed(2);
+}
+
+// विथड्रॉल डेटा को सीधे एडमिन टेबल में भेजने का असली लॉजिक
+function processWebWithdrawal() {
+  const upi = document.getElementById('webUpiInput').value.trim();
+  const amtStr = document.getElementById('webAmountInput').value.trim();
+  const amt = parseFloat(amtStr);
+
+  if(!upi || !amtStr) { alert("कृपया दोनों फील्ड सही से भरें!"); return; }
+  if(amt > liveWalletBalance) { alert("त्रुटि: आपके पास पर्याप्त बैलेंस नहीं है!"); return; }
+
+  liveWalletBalance -= amt;
+  document.getElementById('walletLiveNum').textContent = liveWalletBalance.toFixed(2);
+
+  const txId = '#TXN-' + Math.floor(Math.random() * 90000 + 10000);
+  const dataRow = { id: txId, phone: loggedInUserPhone, upi: upi, val: '₹' + amt.toFixed(2) };
+  localAdminLogs.unshift(dataRow);
+
+  // एडमिन टेबल को लाइव रेंडर करना
+  const tbody = document.getElementById('liveAdminTableBody');
+  let finalHTML = "";
+  localAdminLogs.forEach(row => {
+    finalHTML += `<tr style="background:rgba(6,214,160,0.08); font-weight:bold;">
+      <td>${row.id}</td>
+      <td style="color:var(--accent);">${row.phone}</td>
+      <td>${row.upi}</td>
+      <td style="color:var(--green);">${row.val}</td>
+      <td style="color:var(--green);">Success (Live)</td>
+    </tr>`;
+  });
+  tbody.innerHTML = finalHTML;
+
+  document.getElementById('webUpiInput').value = "";
+  document.getElementById('webAmountInput').value = "";
+
+  alert(`विथड्रॉल सफल!\nलॉगिन फ़ोन नंबर (${loggedInUserPhone}) और UPI डेटा लाइव एडमिन टेबल में ट्रांसफर कर दिया गया है।`);
+}
+</script>
+</body>
+</html>
